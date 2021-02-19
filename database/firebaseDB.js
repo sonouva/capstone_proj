@@ -2,6 +2,7 @@ import * as firebase from "firebase";
 import firestore from "firebase/firestore";
 
 const firebaseConfig = [
+test
 
 ];
 

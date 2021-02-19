@@ -12,5 +12,5 @@ web-build/
 # macOS
 .DS_Store
 
-#database
+# database
 database/firebaseDB.js
