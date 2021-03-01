@@ -3,7 +3,6 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import {createStackNavigator} from "@react-navigation/stack";
 
-
 function ActivityScreen() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

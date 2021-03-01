@@ -1,4 +1,6 @@
-import React, { Component, useState } from "react";
+//renderimage for card view
+
+import React, { Component, useState, setState } from "react";
 import {
   StyleSheet,
   View,
@@ -25,6 +27,12 @@ import {
   Form,
   Input,
   Item,
+  Label,
+  InputGroup,
+  List,
+  ListItem,
+  CheckBox,
+  Textarea,
 } from "native-base";
 import { TouchableOpacityBase } from "react-native";
 
@@ -34,7 +42,7 @@ function ProfileScreen({ navigation }) {
       <Image
         source={{
           uri:
-            "https://www.mof.gov.sg/images/default-source/default-album/spor2020_c.jpg?sfvrsn=3707a67e_1",
+            "https://images.unsplash.com/flagged/photo-1562503542-2a1e6f03b16b?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MXx8c2luZ2Fwb3JlfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80",
         }}
         style={{ height: 150, width: null, flex: 1 }}
       />
@@ -63,7 +71,63 @@ function ProfileScreen({ navigation }) {
         </Right>
       </CardItem>
       <Container>
-        <Text style={styles.description}>Work in Progress!</Text>
+      <InputGroup borderType='underline' >
+                        <Icon name= 'search-circle-outline' style={{color:'#384850'}}/>
+                        <Input placeholder='Search your listings' />
+                    </InputGroup>
+        <Content>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ExploreSecond")}
+            title="Second Screen"
+          >
+            <Card>
+              <CardItem>
+                <Left>
+
+                  <Body>
+                    <Text>Listing Title</Text>
+                    <Text note>Listing Description</Text>
+                  </Body>
+                </Left>
+              </CardItem>
+              <CardItem cardBody>
+                <Image
+                  source={{
+                    uri:
+                      "https://www.mof.gov.sg/images/default-source/default-album/spor2020_c.jpg?sfvrsn=3707a67e_1",
+                  }}
+                  style={{ height: 200, width: null, flex: 1 }}
+                />
+              </CardItem>
+              <CardItem style={styles.box}>
+                <Left>
+                  <Button transparent>
+                    <Icon active name="thumbs-up" />
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("ExploreLikes")}
+                      title="Like Screen"
+                    >
+                      <Text>15 LIKES</Text>
+                    </TouchableOpacity>
+                  </Button>
+                </Left>
+                <Body>
+                  <Button transparent title="Comment Screen">
+                    <Icon active name="chatbubbles" />
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("ExploreComments")}
+                    >
+                      <Text>8 COMMENTS</Text>
+                    </TouchableOpacity>
+                  </Button>
+                </Body>
+                <Right>
+                  <Text>11h ago</Text>
+                </Right>
+              </CardItem>
+            </Card>
+          </TouchableOpacity>
+        </Content>
       </Container>
       <Button
         block
@@ -99,39 +163,52 @@ function Settings({ navigation }) {
 }
 
 function AddService({ navigation }) {
+  const [listingTitle, setListingTitle] = useState("");
+  const [listingDes, setListingDes] = useState("");
+
   return (
     <Container>
       <Content>
         <Form>
-          <Item>
-            <Input placeholder="Title" />
-          </Item>
-          <Item>
-            <Input placeholder="Description" />
-          </Item>
+          <Label>Service Title</Label>
+          <InputGroup borderType="regular">
+            <Input
+              placeholder="Enter title"
+              value={listingTitle}
+              onChangeText={(input) => setListingTitle(input)}
+            />
+          </InputGroup>
+          <Label>Description</Label>
+
+          <Textarea
+            rowSpan={5}
+            bordered
+            placeholder="Enter Description"
+            value={listingDes}
+            onChangeText={(input) => setListingDes(input)}
+          />
         </Form>
       </Content>
       <Right>
-      <Button info style = {styles.addButton}>
-        <Text> List Service</Text>
+        <Button info style={styles.addButton} onPress={() => navigation.navigate("Profile")}>
+          <Text> List Service</Text>
         </Button>
-        </Right>
+      </Right>
     </Container>
-    
   );
 }
 
 const styles = StyleSheet.create({
   description: {
     borderColor: "black",
-    paddingTop: 200,
-    paddingBottom: 200,
+    paddingTop: 50,
+    paddingBottom: 50,
     textAlign: "center",
   },
   setting: {
     paddingRight: 10,
   },
   addButton: {
-    marginBottom: 20,
+    marginBottom: 5,
   },
 });
