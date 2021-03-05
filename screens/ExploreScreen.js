@@ -29,7 +29,7 @@ import {
   Item,
   InputGroup,
 } from "native-base";
-
+import firebase from "../database/firebaseDB";
 
 function ExploreScreen({ navigation }) {
   return (

@@ -35,6 +35,7 @@ import {
   Textarea,
 } from "native-base";
 import { TouchableOpacityBase } from "react-native";
+import firebase from "../database/firebaseDB";
 
 function ProfileScreen({ navigation }) {
   return (
@@ -165,6 +166,11 @@ function Settings({ navigation }) {
 function AddService({ navigation }) {
   const [listingTitle, setListingTitle] = useState("");
   const [listingDes, setListingDes] = useState("");
+
+  firebase.firestore().collection("listings").add({
+    title:[listingTitle],
+    description:[listingDes],
+  });
 
   return (
     <Container>
