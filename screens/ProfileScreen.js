@@ -1,6 +1,6 @@
 //renderimage for card view
 
-import React, { Component, useState, setState } from "react";
+import React, { Component, useState, setState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -36,116 +36,148 @@ import {
 } from "native-base";
 import { TouchableOpacityBase } from "react-native";
 import firebase from "../database/firebaseDB";
-
-function ProfileScreen({ navigation }) {
-  return (
-    <ScrollView>
-      <Image
-        source={{
-          uri:
-            "https://images.unsplash.com/flagged/photo-1562503542-2a1e6f03b16b?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MXx8c2luZ2Fwb3JlfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80",
-        }}
-        style={{ height: 150, width: null, flex: 1 }}
-      />
-      <CardItem>
-        <Left>
-          <Thumbnail
-            source={{
-              uri:
-                "https://e7.pngegg.com/pngimages/93/292/png-clipart-social-media-marketing-logo-blog-advertising-instagram-instagram-logo-rectangle-social-media-thumbnail.png",
-            }}
-          />
-          <Body>
-            <Text>Admin</Text>
-            <Text note>Admin Profile</Text>
-          </Body>
-        </Left>
-        <Right>
-          <Button transparent style={styles.setting}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Settings")}
-              title="Settings"
-            >
-              <Icon active name="settings-outline" />
-            </TouchableOpacity>
-          </Button>
-        </Right>
-      </CardItem>
-      <Container>
-      <InputGroup borderType='underline' >
-                        <Icon name= 'search-circle-outline' style={{color:'#384850'}}/>
-                        <Input placeholder='Search your listings' />
-                    </InputGroup>
-        <Content>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ExploreSecond")}
-            title="Second Screen"
-          >
-            <Card>
-              <CardItem>
-                <Left>
-
-                  <Body>
-                    <Text>Listing Title</Text>
-                    <Text note>Listing Description</Text>
-                  </Body>
-                </Left>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
-                  source={{
-                    uri:
-                      "https://www.mof.gov.sg/images/default-source/default-album/spor2020_c.jpg?sfvrsn=3707a67e_1",
-                  }}
-                  style={{ height: 200, width: null, flex: 1 }}
-                />
-              </CardItem>
-              <CardItem style={styles.box}>
-                <Left>
-                  <Button transparent>
-                    <Icon active name="thumbs-up" />
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("ExploreLikes")}
-                      title="Like Screen"
-                    >
-                      <Text>15 LIKES</Text>
-                    </TouchableOpacity>
-                  </Button>
-                </Left>
-                <Body>
-                  <Button transparent title="Comment Screen">
-                    <Icon active name="chatbubbles" />
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("ExploreComments")}
-                    >
-                      <Text>8 COMMENTS</Text>
-                    </TouchableOpacity>
-                  </Button>
-                </Body>
-                <Right>
-                  <Text>11h ago</Text>
-                </Right>
-              </CardItem>
-            </Card>
-          </TouchableOpacity>
-        </Content>
-      </Container>
-      <Button
-        block
-        info
-        style={styles.addButton}
-        onPress={() => navigation.navigate("AddService")}
-        title="Add Service"
-      >
-        <Text>Add Service</Text>
-      </Button>
-    </ScrollView>
-  );
-}
+import { render } from "react-dom";
 
 const Stack = createStackNavigator();
 
 export default function ProfileStack() {
+  function ProfileScreen({ navigation }) {
+    return (
+      <ScrollView>
+        <Image
+          source={{
+            uri:
+              "https://images.unsplash.com/flagged/photo-1562503542-2a1e6f03b16b?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MXx8c2luZ2Fwb3JlfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80",
+          }}
+          style={{ height: 150, width: null, flex: 1 }}
+        />
+        <CardItem>
+          <Left>
+            <Thumbnail
+              source={{
+                uri:
+                  "https://e7.pngegg.com/pngimages/93/292/png-clipart-social-media-marketing-logo-blog-advertising-instagram-instagram-logo-rectangle-social-media-thumbnail.png",
+              }}
+            />
+            <Body>
+              <Text>Admin</Text>
+              <Text note>Admin Profile</Text>
+            </Body>
+          </Left>
+          <Right>
+            <Button transparent style={styles.setting}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Settings")}
+                title="Settings"
+              >
+                <Icon active name="settings-outline" />
+              </TouchableOpacity>
+            </Button>
+          </Right>
+        </CardItem>
+        <Container>
+          <InputGroup borderType="underline">
+            <Icon name="search-circle-outline" style={{ color: "#384850" }} />
+            <Input placeholder="Search your listings" />
+          </InputGroup>
+          <Content>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ExploreSecond")}
+              title="Second Screen"
+            >
+              <View>{renderListing(listingData)}</View>
+              <Card>
+                <CardItem>
+                  <Left>
+                    <Body>
+                      <Text>Listing Title</Text>
+                      <Text note>Listing Description</Text>
+                    </Body>
+                  </Left>
+                </CardItem>
+                <CardItem cardBody>
+                  <Image
+                    source={{
+                      uri:
+                        "https://www.mof.gov.sg/images/default-source/default-album/spor2020_c.jpg?sfvrsn=3707a67e_1",
+                    }}
+                    style={{ height: 200, width: null, flex: 1 }}
+                  />
+                </CardItem>
+                <CardItem style={styles.box}>
+                  <Left>
+                    <Button transparent>
+                      <Icon active name="thumbs-up" />
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("ExploreLikes")}
+                        title="Like Screen"
+                      >
+                        <Text>15 LIKES</Text>
+                      </TouchableOpacity>
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Button transparent title="Comment Screen">
+                      <Icon active name="chatbubbles" />
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("ExploreComments")}
+                      >
+                        <Text>8 COMMENTS</Text>
+                      </TouchableOpacity>
+                    </Button>
+                  </Body>
+                  <Right>
+                    <Text>11h ago</Text>
+                  </Right>
+                </CardItem>
+              </Card>
+            </TouchableOpacity>
+          </Content>
+        </Container>
+        <Button
+          block
+          info
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AddService")}
+          title="Add Service"
+        >
+          <Text>Add Service</Text>
+        </Button>
+      </ScrollView>
+    );
+  }
+
+  const db = firebase.firestore().collection("listings");
+  const [listingData, setListingData] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = db.orderBy("created").onSnapshot((listings) => {
+      const updatedListings = collection.docs.map((doc) => {
+        // create our own object that pulls the ID into a property
+        const listingObject = {
+          ...doc.data(),
+          id: doc.id,
+        };
+        console.log(listingObject);
+        return listingObject;
+      });
+      setListingData(updatedListings);
+    });
+
+    return unsubscribe; // return the cleanup function
+  }, []);
+
+  const renderListing = (array) =>
+    array.map(({ description, title, id }) => {
+      return (
+        <View>
+          <Text>{description}</Text>
+          <Text>{title}</Text>
+          <Text>{id}</Text>
+        </View>
+      );
+    });
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="Profile" component={ProfileScreen} />
@@ -167,12 +199,20 @@ function AddService({ navigation }) {
   const [listingTitle, setListingTitle] = useState("");
   const [listingDes, setListingDes] = useState("");
 
-  firebase.firestore().collection("listings").add({
-    title:[listingTitle],
-    description:[listingDes],
-  });
+  useEffect(() => {}, [listingTitle, listingDes]);
+
+  //put the codes below as a function then use useeffect
+  function addListing() {
+    console.log(`adding${listingTitle}`);
+    firebase.firestore().collection("listings").add({
+      title: listingTitle,
+      description: listingDes,
+    });
+    navigation.navigate("Profile");
+  }
 
   return (
+    //This is Create function
     <Container>
       <Content>
         <Form>
@@ -196,13 +236,14 @@ function AddService({ navigation }) {
         </Form>
       </Content>
       <Right>
-        <Button info style={styles.addButton} onPress={() => navigation.navigate("Profile")}>
+        <Button info style={styles.addButton} onPress={addListing}>
           <Text> List Service</Text>
         </Button>
       </Right>
     </Container>
   );
 }
+//for button add onpress function firebase create
 
 const styles = StyleSheet.create({
   description: {

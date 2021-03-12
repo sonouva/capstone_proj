@@ -1,7 +1,7 @@
 //for card, under touchableOpacity use key = {item.id}
 //for image to interact with database, add require() - pcmob2, pg178
 //use map to add items - pcmob2, pg184
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Font } from "expo";
 import {
   StyleSheet,
@@ -35,10 +35,10 @@ function ExploreScreen({ navigation }) {
   return (
     <ScrollView>
       <Container>
-      <InputGroup borderType='underline' >
-                        <Icon name= 'search-circle-outline' style={{color:'#384850'}}/>
-                        <Input placeholder='Type your text here' />
-                    </InputGroup>
+        <InputGroup borderType="underline">
+          <Icon name="search-circle-outline" style={{ color: "#384850" }} />
+          <Input placeholder="Type your text here" />
+        </InputGroup>
         <Content>
           <TouchableOpacity
             onPress={() => navigation.navigate("ExploreSecond")}
@@ -55,7 +55,7 @@ function ExploreScreen({ navigation }) {
                   />
                   <Body>
                     <Text>Listing Title</Text>
-                    <Text note>Lising Description</Text>
+                    <Text note>Listing Description</Text>
                   </Body>
                 </Left>
               </CardItem>
