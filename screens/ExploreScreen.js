@@ -30,19 +30,34 @@ import {
   InputGroup,
 } from "native-base";
 import firebase from "../database/firebaseDB";
+import { render } from "react-dom";
 
-function ExploreScreen({ navigation }) {
-  return (
-    <ScrollView>
-      <Container>
-        <InputGroup borderType="underline">
-          <Icon name="search-circle-outline" style={{ color: "#384850" }} />
-          <Input placeholder="Type your text here" />
-        </InputGroup>
-        <Content>
+export default function ExploreStack() {
+  const db = firebase.firestore().collection("listings");
+  const [listingData, setListingData] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = db.orderBy("title").onSnapshot((listings) => {
+      const updatedListings = listings.docs.map((doc) => {
+        // create our own object that pulls the ID into a property
+        const listingObject = {
+          ...doc.data(),
+          id: doc.id,
+        };
+        return listingObject;
+      });
+      setListingData(updatedListings);
+    });
+    return unsubscribe; // return the cleanup function
+  }, []);
+
+  const renderListing = (array) =>
+    array.map(({ description, title, image, likes, reviews, id }) => {
+      return (
+        <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("ExploreSecond")}
-            title="Second Screen"
+            onPress={() => navigation.navigate("ListingSecond")}
+            title="ListingSecond"
           >
             <Card>
               <CardItem>
@@ -54,16 +69,19 @@ function ExploreScreen({ navigation }) {
                     }}
                   />
                   <Body>
-                    <Text>Listing Title</Text>
-                    <Text note>Listing Description</Text>
+                    <Text>Admin</Text>
+                    <Text note>Admin Profile</Text>
                   </Body>
                 </Left>
+                <Body>
+                  <Text>{title}</Text>
+                  <Text note>{description}</Text>
+                </Body>
               </CardItem>
               <CardItem cardBody>
                 <Image
                   source={{
-                    uri:
-                      "https://www.mof.gov.sg/images/default-source/default-album/spor2020_c.jpg?sfvrsn=3707a67e_1",
+                    uri: image,
                   }}
                   style={{ height: 200, width: null, flex: 1 }}
                 />
@@ -76,7 +94,7 @@ function ExploreScreen({ navigation }) {
                       onPress={() => navigation.navigate("ExploreLikes")}
                       title="Like Screen"
                     >
-                      <Text>15 LIKES</Text>
+                      <Text>{likes} LIKES</Text>
                     </TouchableOpacity>
                   </Button>
                 </Left>
@@ -86,7 +104,7 @@ function ExploreScreen({ navigation }) {
                     <TouchableOpacity
                       onPress={() => navigation.navigate("ExploreComments")}
                     >
-                      <Text>8 COMMENTS</Text>
+                      <Text>{reviews} REVIEWS</Text>
                     </TouchableOpacity>
                   </Button>
                 </Body>
@@ -96,10 +114,32 @@ function ExploreScreen({ navigation }) {
               </CardItem>
             </Card>
           </TouchableOpacity>
+        </View>
+      );
+    });
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Explore" component={ExploreScreen} />
+      <Stack.Screen name="ExploreSecond" component={ExploreSecondScreen} />
+      <Stack.Screen name="ExploreLikes" component={ExploreLikeScreen} />
+      <Stack.Screen name="ExploreComments" component={ExploreCommentScreen} />
+    </Stack.Navigator>
+  );
+
+  function ExploreScreen({ navigation }) {
+    return (
+      <Container>
+        <Content>
+          <InputGroup borderType="underline">
+            <Icon name="search-circle-outline" style={{ color: "#384850" }} />
+            <Input placeholder="Search" />
+          </InputGroup>
+          <View>{renderListing(listingData)}</View>
         </Content>
       </Container>
-    </ScrollView>
-  );
+    );
+  }
 }
 
 const Stack = createStackNavigator();
@@ -125,17 +165,6 @@ function ExploreCommentScreen({ navigation }) {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text> Comment Screen!</Text>
     </View>
-  );
-}
-
-export default function ExploreStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Explore" component={ExploreScreen} />
-      <Stack.Screen name="ExploreSecond" component={ExploreSecondScreen} />
-      <Stack.Screen name="ExploreLikes" component={ExploreLikeScreen} />
-      <Stack.Screen name="ExploreComments" component={ExploreCommentScreen} />
-    </Stack.Navigator>
   );
 }
 

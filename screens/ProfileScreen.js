@@ -1,5 +1,3 @@
-//renderimage for card view
-
 import React, { Component, useState, setState, useEffect } from "react";
 import {
   StyleSheet,
@@ -41,6 +39,89 @@ import { render } from "react-dom";
 const Stack = createStackNavigator();
 
 export default function ProfileStack() {
+  const db = firebase.firestore().collection("listings");
+  const [listingData, setListingData] = useState([]);
+
+  function ListingSecond({ navigation }) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text> Second Listing Screen</Text>
+      </View>
+    );
+  }
+
+  useEffect(() => {
+    const unsubscribe = db.orderBy("title").onSnapshot((listings) => {
+      const updatedListings = listings.docs.map((doc) => {
+        // create our own object that pulls the ID into a property
+        const listingObject = {
+          ...doc.data(),
+          id: doc.id,
+        };
+        return listingObject;
+      });
+      setListingData(updatedListings);
+    });
+    return unsubscribe; // return the cleanup function
+  }, []);
+
+  const renderListing = (array) =>
+    array.map(({ description, title, image, likes, reviews, id }) => {
+      return (
+        <View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ListingSecond")}
+            title="ListingSecond"
+          >
+            <Card>
+              <CardItem>
+                <Left>
+                  <Body>
+                    <Text>{title}</Text>
+                    <Text note>{description}</Text>
+                  </Body>
+                </Left>
+              </CardItem>
+              <CardItem cardBody>
+                <Image
+                  source={{
+                    uri: image,
+                  }}
+                  style={{ height: 200, width: null, flex: 1 }}
+                />
+              </CardItem>
+              <CardItem style={styles.box}>
+                <Left>
+                  <Button transparent>
+                    <Icon active name="thumbs-up" />
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("ExploreLikes")}
+                      title="Like Screen"
+                    >
+                      <Text>{likes} LIKES</Text>
+                    </TouchableOpacity>
+                  </Button>
+                </Left>
+                <Body>
+                  <Button transparent title="Comment Screen">
+                    <Icon active name="chatbubbles" />
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("ExploreComments")}
+                    >
+                      <Text>{reviews} REVIEWS</Text>
+                    </TouchableOpacity>
+                  </Button>
+                </Body>
+                <Right>
+                  <Text>11h ago</Text>
+                </Right>
+              </CardItem>
+            </Card>
+          </TouchableOpacity>
+        </View>
+      );
+    });
+
   function ProfileScreen({ navigation }) {
     return (
       <ScrollView>
@@ -81,57 +162,7 @@ export default function ProfileStack() {
             <Input placeholder="Search your listings" />
           </InputGroup>
           <Content>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ExploreSecond")}
-              title="Second Screen"
-            >
-              <View>{renderListing(listingData)}</View>
-              <Card>
-                <CardItem>
-                  <Left>
-                    <Body>
-                      <Text>Listing Title</Text>
-                      <Text note>Listing Description</Text>
-                    </Body>
-                  </Left>
-                </CardItem>
-                <CardItem cardBody>
-                  <Image
-                    source={{
-                      uri:
-                        "https://www.mof.gov.sg/images/default-source/default-album/spor2020_c.jpg?sfvrsn=3707a67e_1",
-                    }}
-                    style={{ height: 200, width: null, flex: 1 }}
-                  />
-                </CardItem>
-                <CardItem style={styles.box}>
-                  <Left>
-                    <Button transparent>
-                      <Icon active name="thumbs-up" />
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate("ExploreLikes")}
-                        title="Like Screen"
-                      >
-                        <Text>15 LIKES</Text>
-                      </TouchableOpacity>
-                    </Button>
-                  </Left>
-                  <Body>
-                    <Button transparent title="Comment Screen">
-                      <Icon active name="chatbubbles" />
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate("ExploreComments")}
-                      >
-                        <Text>8 COMMENTS</Text>
-                      </TouchableOpacity>
-                    </Button>
-                  </Body>
-                  <Right>
-                    <Text>11h ago</Text>
-                  </Right>
-                </CardItem>
-              </Card>
-            </TouchableOpacity>
+            <View>{renderListing(listingData)}</View>
           </Content>
         </Container>
         <Button
@@ -147,36 +178,71 @@ export default function ProfileStack() {
     );
   }
 
-  const db = firebase.firestore().collection("listings");
-  const [listingData, setListingData] = useState([]);
+  function Settings({ navigation }) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text> Settings!</Text>
+      </View>
+    );
+  }
 
-  useEffect(() => {
-    const unsubscribe = db.orderBy("created").onSnapshot((listings) => {
-      const updatedListings = collection.docs.map((doc) => {
-        // create our own object that pulls the ID into a property
-        const listingObject = {
-          ...doc.data(),
-          id: doc.id,
-        };
-        console.log(listingObject);
-        return listingObject;
+  function AddService({ navigation }) {
+    const [listingTitle, setListingTitle] = useState("");
+    const [listingImage, setListingImage] = useState("");
+    const [listingDes, setListingDes] = useState("");
+
+    useEffect(() => {}, [listingTitle, listingDes]);
+
+    //put the codes below as a function then use useeffect
+    function addListing() {
+      console.log(`adding${listingTitle}`);
+      firebase.firestore().collection("listings").add({
+        title: listingTitle,
+        description: listingDes,
       });
-      setListingData(updatedListings);
-    });
+      navigation.navigate("Profile");
+    }
 
-    return unsubscribe; // return the cleanup function
-  }, []);
+    return (
+      <Container>
+        <Content>
+          <Form>
+            <Label>Service Title</Label>
+            <InputGroup borderType="regular">
+              <Input
+                placeholder="Enter title"
+                value={listingTitle}
+                onChangeText={(input) => setListingTitle(input)}
+              />
+            </InputGroup>
+            <Label>Image URL</Label>
+            <InputGroup borderType="regular">
+              <Input
+                placeholder="Enter image URL"
+                value={listingImage}
+                onChangeText={(input) => setListingImage(input)}
+              />
+            </InputGroup>
+            <Label>Description</Label>
 
-  const renderListing = (array) =>
-    array.map(({ description, title, id }) => {
-      return (
-        <View>
-          <Text>{description}</Text>
-          <Text>{title}</Text>
-          <Text>{id}</Text>
-        </View>
-      );
-    });
+            <Textarea
+              rowSpan={5}
+              bordered
+              placeholder="Enter Description"
+              value={listingDes}
+              onChangeText={(input) => setListingDes(input)}
+            />
+          </Form>
+        </Content>
+        <Right>
+          <Button info style={styles.addButton} onPress={addListing}>
+            <Text> List Service</Text>
+          </Button>
+        </Right>
+      </Container>
+    );
+  }
+  //for button add onpress function firebase create
 
   return (
     <Stack.Navigator>
@@ -186,65 +252,6 @@ export default function ProfileStack() {
     </Stack.Navigator>
   );
 }
-
-function Settings({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text> Settings!</Text>
-    </View>
-  );
-}
-
-function AddService({ navigation }) {
-  const [listingTitle, setListingTitle] = useState("");
-  const [listingDes, setListingDes] = useState("");
-
-  useEffect(() => {}, [listingTitle, listingDes]);
-
-  //put the codes below as a function then use useeffect
-  function addListing() {
-    console.log(`adding${listingTitle}`);
-    firebase.firestore().collection("listings").add({
-      title: listingTitle,
-      description: listingDes,
-    });
-    navigation.navigate("Profile");
-  }
-
-  return (
-    //This is Create function
-    <Container>
-      <Content>
-        <Form>
-          <Label>Service Title</Label>
-          <InputGroup borderType="regular">
-            <Input
-              placeholder="Enter title"
-              value={listingTitle}
-              onChangeText={(input) => setListingTitle(input)}
-            />
-          </InputGroup>
-          <Label>Description</Label>
-
-          <Textarea
-            rowSpan={5}
-            bordered
-            placeholder="Enter Description"
-            value={listingDes}
-            onChangeText={(input) => setListingDes(input)}
-          />
-        </Form>
-      </Content>
-      <Right>
-        <Button info style={styles.addButton} onPress={addListing}>
-          <Text> List Service</Text>
-        </Button>
-      </Right>
-    </Container>
-  );
-}
-//for button add onpress function firebase create
-
 const styles = StyleSheet.create({
   description: {
     borderColor: "black",
