@@ -51,7 +51,15 @@ export default function ExploreStack() {
     return unsubscribe; // return the cleanup function
   }, []);
 
-  const renderListing = (array) =>
+  function ListingSecond({ navigation }) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text> Comment Screen!</Text>
+      </View>
+    );
+  }
+
+  const renderListing = (array, navigation) =>
     array.map(({ description, title, image, likes, reviews, id }) => {
       return (
         <View>
@@ -124,6 +132,7 @@ export default function ExploreStack() {
       <Stack.Screen name="ExploreSecond" component={ExploreSecondScreen} />
       <Stack.Screen name="ExploreLikes" component={ExploreLikeScreen} />
       <Stack.Screen name="ExploreComments" component={ExploreCommentScreen} />
+      <Stack.Screen name="ListingSecond" component={ListingSecond} />
     </Stack.Navigator>
   );
 
@@ -135,7 +144,7 @@ export default function ExploreStack() {
             <Icon name="search-circle-outline" style={{ color: "#384850" }} />
             <Input placeholder="Search" />
           </InputGroup>
-          <View>{renderListing(listingData)}</View>
+          <View>{renderListing(listingData, navigation)}</View>
         </Content>
       </Container>
     );

@@ -81,6 +81,13 @@ export default function ProfileStack() {
                     <Text note>{description}</Text>
                   </Body>
                 </Left>
+                <Right>
+                  <Button transparent style={styles.setting}>
+                    <TouchableOpacity onPress={() => deleteListing(id)}>
+                      <Icon active name="trash-outline" />
+                    </TouchableOpacity>
+                  </Button>
+                </Right>
               </CardItem>
               <CardItem cardBody>
                 <Image
@@ -121,6 +128,29 @@ export default function ProfileStack() {
         </View>
       );
     });
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="AddService" component={AddService} />
+      <Stack.Screen name="ListingSecond" component={ListingSecond} />
+    </Stack.Navigator>
+  );
+
+  function deleteListing() {
+    console.log("Deleting" + id);
+    db.doc(id).delete();
+
+    // firebase
+    //   .firestore()
+    //   .collection("listings")
+    //   .where("id", "=", id)
+    //   .get()
+    //   .then((querySnapshot) => {
+    //     querySnapshot.forEach((doc) => doc.ref.delete());
+    //   });
+  }
 
   function ProfileScreen({ navigation }) {
     return (
@@ -243,14 +273,6 @@ export default function ProfileStack() {
     );
   }
   //for button add onpress function firebase create
-
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Settings" component={Settings} />
-      <Stack.Screen name="AddService" component={AddService} />
-    </Stack.Navigator>
-  );
 }
 const styles = StyleSheet.create({
   description: {
