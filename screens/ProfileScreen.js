@@ -44,12 +44,13 @@ export default function ProfileStack() {
 
   function ListingSecond({ navigation }) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text> Second Listing Screen</Text>
+      <View style={{ flex: 1, alignItems: "center" }}>
+        {renderListingSecond(listingData)}
       </View>
     );
   }
 
+  //retrieve firebase data
   useEffect(() => {
     const unsubscribe = db.orderBy("title").onSnapshot((listings) => {
       const updatedListings = listings.docs.map((doc) => {
@@ -65,7 +66,7 @@ export default function ProfileStack() {
     return unsubscribe; // return the cleanup function
   }, []);
 
-  const renderListing = (array) =>
+  const renderListing = (array, navigation) =>
     array.map(({ description, title, image, likes, reviews, id }) => {
       return (
         <View>
@@ -129,6 +130,15 @@ export default function ProfileStack() {
       );
     });
 
+  const renderListingSecond = (array, navigation) =>
+    array.map(({ description, title, image, likes, reviews, id }) => {
+      return (
+        <View>
+          <Text>{title}</Text>
+        </View>
+      );
+    });
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="Profile" component={ProfileScreen} />
@@ -141,15 +151,6 @@ export default function ProfileStack() {
   function deleteListing() {
     console.log("Deleting" + id);
     db.doc(id).delete();
-
-    // firebase
-    //   .firestore()
-    //   .collection("listings")
-    //   .where("id", "=", id)
-    //   .get()
-    //   .then((querySnapshot) => {
-    //     querySnapshot.forEach((doc) => doc.ref.delete());
-    //   });
   }
 
   function ProfileScreen({ navigation }) {
@@ -192,7 +193,7 @@ export default function ProfileStack() {
             <Input placeholder="Search your listings" />
           </InputGroup>
           <Content>
-            <View>{renderListing(listingData)}</View>
+            <View>{renderListing(listingData, navigation)}</View>
           </Content>
         </Container>
         <Button
@@ -229,6 +230,9 @@ export default function ProfileStack() {
       firebase.firestore().collection("listings").add({
         title: listingTitle,
         description: listingDes,
+        image: listingImage,
+        reviews: 0,
+        likes: 0,
       });
       navigation.navigate("Profile");
     }
