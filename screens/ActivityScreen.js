@@ -29,7 +29,7 @@ function messagePage({ navigation }) {
 export default function ActivityStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Activity" component={ActivityScreen} />
+      <Stack.Screen name="Chats" component={ActivityScreen} />
       <Stack.Screen name="messagePage" component={messagePage} />
     </Stack.Navigator>
   );

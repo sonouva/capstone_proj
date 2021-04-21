@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -21,7 +21,7 @@ export default function App() {
               iconName = "ios-search-outline";
             } else if (route.name === "Activity") {
               iconName = "chatbubble-outline";
-            }else if (route.name === "Profile") {
+            } else if (route.name === "Profile") {
               iconName = "person-circle-sharp";
             }
             // You can return any component that you like here!

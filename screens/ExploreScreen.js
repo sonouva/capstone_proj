@@ -18,6 +18,7 @@ import {
   Content,
   Card,
   CardItem,
+  DeckSwiper,
   Thumbnail,
   Text,
   Button,
@@ -33,12 +34,12 @@ import firebase from "../database/firebaseDB";
 import { render } from "react-dom";
 
 export default function ExploreStack() {
-  const db = firebase.firestore().collection("listings");
-  const [listingData, setListingData] = useState([]);
+  const db = firebase.firestore().collection("people");
+  const [peopleData, setPeopleData] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = db.orderBy("title").onSnapshot((listings) => {
-      const updatedListings = listings.docs.map((doc) => {
+    const unsubscribe = db.orderBy("text").onSnapshot((people) => {
+      const updatedData = people.docs.map((doc) => {
         // create our own object that pulls the ID into a property
         const listingObject = {
           ...doc.data(),
@@ -46,105 +47,68 @@ export default function ExploreStack() {
         };
         return listingObject;
       });
-      setListingData(updatedListings);
+      setPeopleData(updatedData);
     });
     return unsubscribe; // return the cleanup function
   }, []);
 
-  function ListingSecond({ navigation }) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text> Comment Screen!</Text>
-      </View>
-    );
-  }
-
-  const renderListing = (array, navigation) =>
-    array.map(({ description, title, image, likes, reviews, id }) => {
-      return (
-        <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ListingSecond")}
-            title="ListingSecond"
-          >
-            <Card>
-              <CardItem>
-                <Left>
-                  <Thumbnail
-                    source={{
-                      uri:
-                        "https://e7.pngegg.com/pngimages/93/292/png-clipart-social-media-marketing-logo-blog-advertising-instagram-instagram-logo-rectangle-social-media-thumbnail.png",
-                    }}
-                  />
-                  <Body>
-                    <Text>Admin</Text>
-                    <Text note>Admin Profile</Text>
-                  </Body>
-                </Left>
-                <Body>
-                  <Text>{title}</Text>
-                  <Text note>{description}</Text>
-                </Body>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
-                  source={{
-                    uri: image,
-                  }}
-                  style={{ height: 200, width: null, flex: 1 }}
-                />
-              </CardItem>
-              <CardItem style={styles.box}>
-                <Left>
-                  <Button transparent>
-                    <Icon active name="thumbs-up" />
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("ExploreLikes")}
-                      title="Like Screen"
-                    >
-                      <Text>{likes} LIKES</Text>
-                    </TouchableOpacity>
-                  </Button>
-                </Left>
-                <Body>
-                  <Button transparent title="Comment Screen">
-                    <Icon active name="chatbubbles" />
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("ExploreComments")}
-                    >
-                      <Text>{reviews} REVIEWS</Text>
-                    </TouchableOpacity>
-                  </Button>
-                </Body>
-                <Right>
-                  <Text>11h ago</Text>
-                </Right>
-              </CardItem>
-            </Card>
-          </TouchableOpacity>
-        </View>
-      );
+  const renderItem = (array, navigation) =>
+    array.map(({ hearts, image, text, id }) => {
+      const cards = [
+        {
+          text: { hearts },
+          name: { text },
+          image: { image },
+        },
+      ];
     });
-
+  class DeckSwiperExample extends Component {
+    render() {
+      return (
+        <Container>
+          <Header />
+          <View>
+            <DeckSwiper
+              dataSource={cards}
+              renderItem={(item) => (
+                <Card style={{ elevation: 3 }}>
+                  <CardItem>
+                    <Left>
+                      <Thumbnail source={item.image} />
+                      <Body>
+                        <Text>{item.text}</Text>
+                        <Text note>NativeBase</Text>
+                      </Body>
+                    </Left>
+                  </CardItem>
+                  <CardItem cardBody>
+                    <Image
+                      style={{ height: 300, flex: 1 }}
+                      source={item.image}
+                    />
+                  </CardItem>
+                  <CardItem>
+                    <Icon name="heart" style={{ color: "#ED4A6A" }} />
+                    <Text>{item.name}</Text>
+                  </CardItem>
+                </Card>
+              )}
+            />
+          </View>
+        </Container>
+      );
+    }
+  }
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Explore" component={ExploreScreen} />
-      <Stack.Screen name="ExploreSecond" component={ExploreSecondScreen} />
-      <Stack.Screen name="ExploreLikes" component={ExploreLikeScreen} />
-      <Stack.Screen name="ExploreComments" component={ExploreCommentScreen} />
-      <Stack.Screen name="ListingSecond" component={ListingSecond} />
+      <Stack.Screen name="Expore" component={ExploreScreen} />
     </Stack.Navigator>
   );
-
   function ExploreScreen({ navigation }) {
     return (
       <Container>
         <Content>
-          <InputGroup borderType="underline">
-            <Icon name="search-circle-outline" style={{ color: "#384850" }} />
-            <Input placeholder="Search" />
-          </InputGroup>
-          <View>{renderListing(listingData, navigation)}</View>
+          <View>{renderItem(peopleData, navigation)}</View>
         </Content>
       </Container>
     );
@@ -152,34 +116,3 @@ export default function ExploreStack() {
 }
 
 const Stack = createStackNavigator();
-
-function ExploreSecondScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text> Second Screen!</Text>
-    </View>
-  );
-}
-
-function ExploreLikeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text> Like Screen!</Text>
-    </View>
-  );
-}
-
-function ExploreCommentScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text> Comment Screen!</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  search: {
-    backgroundColor: "lightgrey",
-  },
-  box: {},
-});

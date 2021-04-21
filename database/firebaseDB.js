@@ -2,12 +2,12 @@ import { firebase } from "@firebase/app";
 import "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD-iZEBgJlEJ-6nrz4c6TE0l7iSiK9TW-A",
-  authDomain: "pcmob-fp.firebaseapp.com",
-  projectId: "pcmob-fp",
-  storageBucket: "pcmob-fp.appspot.com",
-  messagingSenderId: "859506954995",
-  appId: "1:859506954995:web:f44978eebbfa8aeff59d86",
+  apiKey: "AIzaSyA1rEIbjdrCZarLRStZv7lGAY180Vxck1g",
+  authDomain: "app7-a65f6.firebaseapp.com",
+  projectId: "app7-a65f6",
+  storageBucket: "app7-a65f6.appspot.com",
+  messagingSenderId: "490976261630",
+  appId: "1:490976261630:web:4c6058a7d0251a73b6bcaf",
 };
 
 firebase.initializeApp(firebaseConfig);

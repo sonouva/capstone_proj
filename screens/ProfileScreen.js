@@ -50,86 +50,6 @@ export default function ProfileStack() {
     );
   }
 
-  //retrieve firebase data
-  useEffect(() => {
-    const unsubscribe = db.orderBy("title").onSnapshot((listings) => {
-      const updatedListings = listings.docs.map((doc) => {
-        // create our own object that pulls the ID into a property
-        const listingObject = {
-          ...doc.data(),
-          id: doc.id,
-        };
-        return listingObject;
-      });
-      setListingData(updatedListings);
-    });
-    return unsubscribe; // return the cleanup function
-  }, []);
-
-  const renderListing = (array, navigation) =>
-    array.map(({ description, title, image, likes, reviews, id }) => {
-      return (
-        <View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ListingSecond")}
-            title="ListingSecond"
-          >
-            <Card>
-              <CardItem>
-                <Left>
-                  <Body>
-                    <Text>{title}</Text>
-                    <Text note>{description}</Text>
-                  </Body>
-                </Left>
-                <Right>
-                  <Button transparent style={styles.setting}>
-                    <TouchableOpacity onPress={() => deleteListing(id)}>
-                      <Icon active name="trash-outline" />
-                    </TouchableOpacity>
-                  </Button>
-                </Right>
-              </CardItem>
-              <CardItem cardBody>
-                <Image
-                  source={{
-                    uri: image,
-                  }}
-                  style={{ height: 200, width: null, flex: 1 }}
-                />
-              </CardItem>
-              <CardItem style={styles.box}>
-                <Left>
-                  <Button transparent>
-                    <Icon active name="thumbs-up" />
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("ExploreLikes")}
-                      title="Like Screen"
-                    >
-                      <Text>{likes} LIKES</Text>
-                    </TouchableOpacity>
-                  </Button>
-                </Left>
-                <Body>
-                  <Button transparent title="Comment Screen">
-                    <Icon active name="chatbubbles" />
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("ExploreComments")}
-                    >
-                      <Text>{reviews} REVIEWS</Text>
-                    </TouchableOpacity>
-                  </Button>
-                </Body>
-                <Right>
-                  <Text>11h ago</Text>
-                </Right>
-              </CardItem>
-            </Card>
-          </TouchableOpacity>
-        </View>
-      );
-    });
-
   const renderListingSecond = (array, navigation) =>
     array.map(({ description, title, image, likes, reviews, id }) => {
       return (
@@ -156,24 +76,18 @@ export default function ProfileStack() {
   function ProfileScreen({ navigation }) {
     return (
       <ScrollView>
-        <Image
-          source={{
-            uri:
-              "https://images.unsplash.com/flagged/photo-1562503542-2a1e6f03b16b?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MXx8c2luZ2Fwb3JlfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80",
-          }}
-          style={{ height: 150, width: null, flex: 1 }}
-        />
         <CardItem>
           <Left>
             <Thumbnail
               source={{
                 uri:
-                  "https://e7.pngegg.com/pngimages/93/292/png-clipart-social-media-marketing-logo-blog-advertising-instagram-instagram-logo-rectangle-social-media-thumbnail.png",
+                  "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
               }}
             />
             <Body>
-              <Text>Admin</Text>
-              <Text note>Admin Profile</Text>
+              <Text>Kevin</Text>
+              <Text note>Programmer</Text>
+              <Text note>Looking to date</Text>
             </Body>
           </Left>
           <Right>
@@ -187,15 +101,6 @@ export default function ProfileStack() {
             </Button>
           </Right>
         </CardItem>
-        <Container>
-          <InputGroup borderType="underline">
-            <Icon name="search-circle-outline" style={{ color: "#384850" }} />
-            <Input placeholder="Search your listings" />
-          </InputGroup>
-          <Content>
-            <View>{renderListing(listingData, navigation)}</View>
-          </Content>
-        </Container>
         <Button
           block
           info
@@ -203,7 +108,7 @@ export default function ProfileStack() {
           onPress={() => navigation.navigate("AddService")}
           title="Add Service"
         >
-          <Text>Add Service</Text>
+          <Text>Edit Profile</Text>
         </Button>
       </ScrollView>
     );
@@ -228,11 +133,10 @@ export default function ProfileStack() {
     function addListing() {
       console.log(`adding${listingTitle}`);
       firebase.firestore().collection("listings").add({
-        title: listingTitle,
+        text: listingTitle,
         description: listingDes,
         image: listingImage,
-        reviews: 0,
-        likes: 0,
+        hearts: 0,
       });
       navigation.navigate("Profile");
     }
@@ -241,7 +145,7 @@ export default function ProfileStack() {
       <Container>
         <Content>
           <Form>
-            <Label>Service Title</Label>
+            <Label>Name</Label>
             <InputGroup borderType="regular">
               <Input
                 placeholder="Enter title"
@@ -257,7 +161,7 @@ export default function ProfileStack() {
                 onChangeText={(input) => setListingImage(input)}
               />
             </InputGroup>
-            <Label>Description</Label>
+            <Label>Describe Yourself</Label>
 
             <Textarea
               rowSpan={5}
@@ -270,7 +174,7 @@ export default function ProfileStack() {
         </Content>
         <Right>
           <Button info style={styles.addButton} onPress={addListing}>
-            <Text> List Service</Text>
+            <Text> Upload Profile</Text>
           </Button>
         </Right>
       </Container>
